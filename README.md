@@ -1,1 +1,2 @@
-# image_similarity
+# Documentation for Image Similarity Project
+## 
