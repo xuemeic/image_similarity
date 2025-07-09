@@ -1,0 +1,68 @@
+
+% Oringinally Written by Justin & Landon on April 2026
+% Modified and Commented by Amy Lan on 07/08/2025
+% Rewritten by Amy on 07/08/2025
+% Main function: Generate 301 cat images and save it in a folder
+B = zeros(50,50);
+B(4,5) = 1; B(4,11) = 1; B(5,4:2:6) = 1; B(5,10:2:12) = 1;
+B(6,4) = 1; B(6,7:9) = 1; B(6,13:17) = 1; B(7,18) = 1;
+B(7:9,3) = 1; B(8,19) = 1; B(8,1:2) = 1; B(9:10,20) = 1;
+B(11:15,21) = 1; B(16,3) = 1; B(16,20) = 1; B(17,4) = 1; B(17,19) = 1;
+B(18,5:18) = 1; B(10:15,2) = 1; B(10,1) = 1;
+B(9,5:3:11) = 1; B(10,7:2:9) = 1; B(8:2:10,13:14) = 1;
+B(7,14) = 0.5; B(7:8,15:2:17) = 0.5; B(8,18) = 0.5;
+B(17,14) = 1; B(16,15:17) = 1; B(15,18) = 1;
+B(17,15:2:17) = 0.5; B(16,18) = 0.5; B(7,7:2:9) = 0.5;
+% Generates a pattern
+
+B = circshift(B,[13 13]);
+% reposition each pixel by +13 in row and +13 in column
+
+hur_case.rain = B;
+% Create an empty struct hur_case and give the B to one field called "rain"
+
+folder = 'CatImages_with_rot_Zeropad/';
+%  first image as 001 (we need to format our image ID)
+fname  = fullfile(folder, sprintf('cat_%03d.mat', 1));
+% fullfile(..) build fullfile path
+save(fname, "hur_case")
+% bundle all variants to a single variable "hur_case"
+
+
+
+%% The Scrambling
+N = 300;
+
+for i = 1:N
+
+    A = imrotate(B,(-1)^i * mod(i,11), 'bilinear', 'crop');
+    % rotate image B by (-1)^i * mod(i,11) degrees
+    % bilinear: interpolate pixel values smoothly
+    % crop: crop pixels and keep the output the same 50*50 size.
+
+    bound = floor( 5 * size(A,2) / 8);
+
+    a = randi([1, bound]);
+    shifted = zeros(size(A));
+    shifted(:, a+1:end) = A(:, 1:end-a);
+    A = shifted;
+
+    b = randi([1,bound]);
+    shifted = zeros(size(A));
+    shifted(1:end-b, :) = A(b+1:end, :);
+    A = shifted;
+
+    e = 0.005 + (0.1 - 0.005) * rand;
+    C = noise(A,e); % adding gaussian noise
+    A = add_dot(C, i*2); % sprinkling random dots
+
+    if mod(i,10) == 0
+        A = scram(A);
+    end
+
+    hur_case.rain = A;
+     % build a three‐digit index by doing (i+1)
+    fname = fullfile(folder, sprintf('cat_%03d.mat', i+1));
+    save(fname, 'hur_case');
+end
+

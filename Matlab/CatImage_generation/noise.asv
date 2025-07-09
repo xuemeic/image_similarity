@@ -1,0 +1,10 @@
+% Oringinally Written by Justin & Landon on April 2026
+% Modified and Commented by Amy Lan on 07/08/2025
+% Rewritten by Amy Lan 07/08/2025
+%
+function output = noise(A,e)
+
+E = e * randn(50, 50); % Gaussian noise with standard deviation of 0.1
+output = A + E;
+
+end
