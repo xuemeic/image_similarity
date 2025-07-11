@@ -22,7 +22,7 @@ B = circshift(B,[13 13]);
 % reposition each pixel by +13 in row and +13 in column
 
 folderMAT = fullfile('..','synthetic_data','cat_image_rot');
-folderPNG = fullfile(folderMAT,'png');
+folderPNG = fullfile(folderMAT,'png_rot');
 % use fullfile to build the path
 % fullfile prevents hardcoding separators like "/" and "\" differences
 
