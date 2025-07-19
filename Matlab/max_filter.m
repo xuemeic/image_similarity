@@ -25,7 +25,7 @@
 % Then we find the maximum in our M*N matrix and recored that to the K*1
 % vector ( we totally have k maximums over k templates)
 
-function scores = MaxFilter(templates, img)
+function scores = max_filter(templates, img)
     
     [M,N,K] = size(templates);
 
