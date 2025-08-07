@@ -29,21 +29,17 @@ function scores = max_filter_no_loop(image_collection, query_image)
     % rotate all K images in the collection by 180° (for cross‑correlation)
     collection_rotated = rot90(image_collection, 2);
 
-    %image_collection = single(image_collection);
-    %query_image = single(query_image);
+    image_collection = single(image_)
 
     % FFT of the query image and of each rotated collection image
     F_query      = fft2(query_image);          % M×N
     F_collection = fft2(collection_rotated);    % M×N×K
 
     % multiply in the frequency domain → K correlation maps
-    corr_maps = real(ifft2( F_query .* F_collection));  % M×N×K
-    % corr_maps = ifft2(F_query .* F_collection, 'symmetric'); 
+    corr_maps = real( ifft2( F_query .* F_collection ) );  % M×N×K
 
     % max‑pool over rows & columns to get one score per image
-    max_img    = max(corr_maps,[],[1 2]);   % 1×1×K
-    scores = max_img(:);                    % K×1 
-
-    %now scores is K×1
+    scores = reshape(max(max(corr_maps,[],1),[],2), [], 1);
+    % Now scores is K×1
 
 end

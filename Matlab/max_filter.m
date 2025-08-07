@@ -27,12 +27,13 @@
 
 function scores = max_filter(image_collection, query_image)
     
+    % image_collection should be an M*N*K image stack
     [M, N, K] = size(image_collection);
 
-    % Compute FFT of the query image once
+    % compute FFT of the query image once
     F_query = fft2(query_image);
 
-    % Preallocate scores
+    % preallocate scores
     scores = zeros(K, 1);
 
     for k = 1:K

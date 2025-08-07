@@ -48,7 +48,7 @@ for i = 1:numel(entries)
             img = prepare_matrix(img, VALUE);
 
             % Max‑filter: returns 1×1×K of max responses
-            v = max_filter(templates, img);
+            v = max_filter_no_loop(templates, img);
 
             % Reshape into a K×1 vector
             v = reshape(v, numTemplates, 1);

@@ -1,0 +1,41 @@
+% Originally Written by Justin on March 2025
+% Rewritten and Commented by Amy Lan on 07/16/2025
+% Modified & Documented by Amy Lan on 07/17/2025
+% Renamed and Modified again by Amy on 07/18/2025
+
+% Description:
+% The functiom is oringinally designed for real hurricane data. Later on we
+% switched to simulated car data, then this process may not be necessary.
+% It ensures :
+% 1. the input matrix is square (rows×rows)shifts 
+% 2. all non-NaN values by a constant, and replaces any NaNs with zeros. Used to
+% standardize image matrices before filtering.
+
+function matrix = prepare_matrix(test_im, VALUE)
+% PREPAREMATRIX sets up the matrix to be used in Topfive or HScore, this
+% function will take a loaded matrix and make sure it is 301x301 as well as
+% shift the values and turn the NaN values into zeroes.
+%   test_im is the loaded matrix
+%   VALUE is the constant that we will increase by, default is zero
+
+    arguments
+    test_im
+    VALUE = 0
+    end
+
+    % makes sure the matrix is 301 x 301
+    [a,n] = size(test_im);
+    if a ~= n
+        num_additional_columns = a - size(test_im, 2);
+        NaN_matrix = NaN(a, num_additional_columns);
+        % Concatenate the NaN matrix to the original matrix
+        test_im = [NaN_matrix test_im];
+    end
+    
+    % shift values up by VALUE
+    test_im(~isnan(test_im)) = test_im(~isnan(test_im)) + VALUE;
+    test_im(isnan(test_im)) = 0;
+
+    % returns the new matrix
+    matrix = test_im;
+end
