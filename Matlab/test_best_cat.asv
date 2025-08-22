@@ -1,0 +1,8 @@
+
+%written by Amy on 08/21/2025
+template_mat = 'template_phi_10.mat';
+image_folder = '../CatImages_no_rot';
+query_idx    = 1;     % which cat_XXX.mat to use as query
+topK         = 16;    % how many neighbors to report
+
+out = best_cat(template_mat, image_folder, query_idx, topK)

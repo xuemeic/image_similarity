@@ -3,7 +3,7 @@
 % This is to check the efficiency between max_filter and max_filter_no_loop
 
 
-m = 50; n = 50; K = 500; % K images in the collection each m*n,
+m = 500; n = 500; K = 5000; % K images in the collection each m*n,
 rng(3); % set seeds for reproducibility
 Imgs = randn(m, n, K); % k random images
 W = randn(m, n); % one random query image
