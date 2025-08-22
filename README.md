@@ -12,3 +12,6 @@ This project generates synthetic 50×50 “cat” images and extracts **template
    - `.mat` file containing the raw matrix `A`
    - optional `.png` for quick viewing
 3. Extract a **K-dim** feature vector by correlating a **collection of K images ** from an image collection with a **query image** and taking the **maximum response** per image.
+
+## Functions
+`gen_cat_image_rot.m`: run once. This generates all the images in `synthetic_data -> cat_image_rot`
