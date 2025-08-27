@@ -12,7 +12,7 @@ function out = best_cat(template_mat, image_folder, query_idx, topK)
 %
 % Inputs
 %   template_mat : .mat file containing variable:
-%                  - templates  (50x50xK double)
+%                  - templates  (MxNxK double)
 %   image_folder : folder path with cat_001.mat ... cat_301.mat (each has variable A)
 %   query_idx    : which image to use as the query
 %   topK         : number of neighbors to return
@@ -72,7 +72,7 @@ idx_phi_topK = order(1:topK);
 distances    = sqrt(D2); 
 % convert back to Euclidean Distance
 
-% 5) Direct FFT-correlation baseline
+% 5) direct FFT-correlation baseline
 % FFT is used for a different goal
 % compute the full cross-correlation map between the query and each candidate image 
 % to get a single best score per image

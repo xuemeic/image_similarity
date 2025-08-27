@@ -8,13 +8,13 @@
 %   scores = max_filter(image_collection, query_image)
 %
 % Inputs:
-%   image_collection – M×N×K 3-D array (each slice is one template image)
+%   image_collection – M×N×K 3-D array (each slice is one image)
 %                      (:,:,1) is the first template, (:,:,n) is the n-th.
-%   query_image      – M×N image in which to search for each template
+%   query_image      – M×N image in which to search for each image
 %
 % Output:
 %   scores           – K×1 vector of peak correlation values;
-%                      scores(k) is the maximum response of template k
+%                      scores(k) is the maximum response of image k
 %                      anywhere in the M×N query image
 %
 % Process:
