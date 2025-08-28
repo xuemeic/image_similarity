@@ -4,6 +4,9 @@
 % Blend noise.m into gen_cat_image.m (main function) by Amy on 07/09/2025
 % Add PNG folder to the output by my on 07/09/2025
 % Rewrote the loop and remove the hur_case.rain struct by Amy on 07/09/2025
+% Replace circshift (wrap-around) with 100x100 img + imtranslate + center-crop 
+% so off-frame pixels are dropped (no wrap) by Amy on 08/24/2025
+
 
 % Main function: Generate 301 cat images and save it in a folder
 B = zeros(50,50);
@@ -41,11 +44,33 @@ for i = 0:N
     A = B;
     if i>0
             % random horizontal + vertical shift (up to 5/8 width)
-            w = size(A,2);
+            % w = size(A,2);
+            % maxShift = floor(5*w/8);
+            % dx = randi(maxShift);
+            % dy = randi(maxShift);
+            % A = circshift(A, [dy, dx]);
+
+            % Instead of letting off-frame portion wrap back, we would do
+            % zero-padded shift on H * W canvas + center crop H/2 * W/2
+            
+            [h,w] = size(A);   % h*w image in the middle
+            H = 2*h; W = 2*w;  % H*W entire image size
+
+            C = zeros(H, W);
+            r0 = h/2; c0 = w/2;              
+            C(r0+1:r0+h, c0+1:c0+w) = A;     % embed A in the middle
+
+
+            % same shift magnitude as before (based on original 50-px width)
             maxShift = floor(5*w/8);
-            dx = randi(maxShift);
-            dy = randi(maxShift);
-            A = circshift(A, [dy, dx]);
+            dx = randi(maxShift);    % shift right
+            dy = randi(maxShift);    % shift down
+
+            % translate without wrap; keep 100×100 size, fill uncovered with zeros
+            C = imtranslate(C, [dx, dy], 'FillValues', 0, 'OutputView', 'same');
+
+            % crop the center back to 50×50
+            A = C(r0+1:r0+h, c0+1:c0+w);
 
             % add zero-mean Gaussian noise, std dev uniform [0.005,0.1]
             e = 0.005 + (0.1-0.005)*rand;
