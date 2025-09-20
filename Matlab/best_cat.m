@@ -1,5 +1,9 @@
 % written by Amy on 08/10/2025
 % Updated by Amy on 08/15/2025
+% Renamed by Amy on 08/24/2025
+% Split the best_cat to two seprate functions by Amy on 08/24/2025
+
+
 
 function out = best_cat(template_mat, image_folder, query_idx, topK)
 % BEST_CAT  Score 50×50 cat images against a template collection and

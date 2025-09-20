@@ -1,0 +1,77 @@
+% written by Amy on 08/10/2025
+% Updated by Amy on 08/15/2025
+% Renamed by Amy on 08/24/2025
+% Split the best_cat to two seprate functions and name 
+% the direct fft correlation version as best_match.m by Amy on 08/24/2025
+% Add shift detection by Amy on 08/26/2025
+% Line up the variables names with the paper by Amy on 08/31/2025
+
+
+function out = best_match_norm(image_collection, query_image, topJ)
+% BEST_MATCH  Baseline retrieval by direct FFT cross-correlation.
+%   out = best_match(image_collection, query_image, topK)
+% Inputs:
+%   image_collection : m*n*N stack (each slice is a candidate image in img collection)
+%   query_image      : m*n*1 query
+%   topJ             : number of top matches to return
+% Output:
+% return in struct for clarity
+%   out.scores       : 1×J peak correlation per slice
+%   out.idx_topJ     : 1×topJ indices of best matches (list in descending by score)
+%   out.shifts_topJ  : topJ×2 [row_shift, col_shift] (circular) to align slice to query
+%   out.t_total      : elapsed time in second
+
+
+[m,n,N] = size(image_collection);
+topJ = min(topJ, N);
+
+% Try normalization centering in mean, normalize query img
+q0  = query_image - mean(query_image(:)); 
+nq  = norm(q0(:)) + eps;
+Fq  = fft2(q0);                      
+
+scores = zeros(1,N);
+
+t0 = tic;
+% 1) score each slice by peak of correlation map
+for i = 1:N
+    Ii  = image_collection(:,:,i);
+
+    % centering in mean and normalize images
+    Ii0 = Ii - mean(Ii(:));
+    ni  = norm(Ii0(:)) + eps;
+
+    % circular cross-correlation via FFT (no rot90 when using conj)
+    cm  = ifft2( conj(Fq) .* fft2(Ii0), 'symmetric' );
+
+    % normalized peak (NCC); self-match ≈ 1
+    scores(i) = max(cm, [], 'all') / (nq * ni);
+end
+
+
+% 2) pick topJ
+[~, order] = sort(scores, 'descend');
+idx_topJ   = order(1:topJ);
+
+% 3) for topJ, also compute circular shifts from the argmax
+% shifts computed from the same normalized cross correlation map
+shifts = zeros(topJ,2);
+for t = 1:topJ
+    i   = idx_topJ(t);
+    Ii0 = image_collection(:,:,i) - mean(image_collection(:,:,i), 'all');
+    cm  = ifft2( conj(Fq) .* fft2(Ii0), 'symmetric' );
+    [~, idx] = max(cm(:));
+    [r,c] = ind2sub([m n], idx);
+    row_shift = mod(m - r, m);
+    col_shift = mod(n - c, n);
+    shifts(t,:) = [row_shift, col_shift];
+end
+t_total = toc(t0);
+
+% pack
+out = struct();
+out.scores      = scores;
+out.idx_topJ    = idx_topJ;
+out.shifts_topJ = shifts;
+out.t_total     = t_total;
+end

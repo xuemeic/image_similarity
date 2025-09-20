@@ -4,6 +4,8 @@
 % Blend noise.m into gen_cat_image.m (main function) by Amy on 07/09/2025
 % Add PNG folder to the output by my on 07/09/2025
 % Rewrote the loop and remove the hur_case.rain struct by Amy on 07/09/2025
+% Replace circshift (wrap-around) with 100x100 img + imtranslate + center-crop 
+% so off-frame pixels are dropped (no wrap) by Amy on 08/24/2025
 
 % Main function: Generate 301 cat images wt rotation and save it in a folder
 B = zeros(50,50);
