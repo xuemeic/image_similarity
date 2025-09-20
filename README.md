@@ -29,8 +29,18 @@ anywhere in the M×N query image. Return a K*1 vector of peak scores (one per im
 `max_filter_no_loop.m` : vectorized version of above. Compute all k scores in one go; clearer but heavier RAM in Matlab, resulting in slower computation than loop version above.
 * Use : `scores = max_filter_no_loop(image_collection, query_image)`
 
-`best_match.m` : build phi for all images using fft correlation in the collection, score the query image, find top k neighbors with their corresponding shifts. Serving as a baseline compared to the template method below. 
-* Run : `best_match(image_collection, query_image, topK)`
+`best_match.m` : Baseline image retrieval via cross-correlation computed with FFTs (no normalization). For each image in the stack, the function scores the peak of the correlation map against the query, find top J neighbors with their corresponding shifts. 
+* Run : `out = best_match(image_collection, query_image, topJ)`
 
-`best_match_temp.m` : build phi for all images using fft correlation in the collection, score the query image, find top k neighbors with their corresponding shifts.
-* Run: `best_match_temp(image_collection, query_image, topK, temp_mat)`
+`best_match_norm.m` : Baseline image retrieval via zero-normalized cross-correlation computed with FFTs. For each image in the stack, the function scores the peak of the correlation map against the query, find top J neighbors with their corresponding shifts. 
+* Run: `out = best_match_norm(image_collection, query_image, topJ)`
+
+`best_match_temp.m` : a template-based retrieval method in which we 
+treat a template bank ('template'), build phi for all images using max filter method and score the query image, find top J neighbors with their corresponding shifts. 
+* Run: `out = best_match_temp(image_collection, query_image, topK, temp_mat)`
+
+`test_best_match.m` : Loads an m×n×N stack of images (cat_001.mat … cat_301.mat, each with variable A). Picks query_idx as the query image. Run
+`best_match_norm(image_collection, query_image, topJ)`and `best_match_template(image_collection, query_image, topJ, template)`
+Prints Top-J indices, circular shifts, and elapsed time (FFT). Visualizes Top-J results for both methods (FFT on top row, Template on bottom row). Lastly Reports overlap between the two Top-J lists.
+
+
