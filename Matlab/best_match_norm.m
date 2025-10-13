@@ -43,7 +43,7 @@ for i = 1:N
     % circular cross-correlation via FFT (no rot90 when using conj)
     cm  = ifft2( Fq .* fft2(rot90(Ii0,2)),'symmetric');
     % normalized peak; good match -> 1
-    scores(i) = max(cm, [], 'all') / (nq * ni);
+    scores(i) = max(cm, [], 'all');
 end
 
 % 2) pick topJ
