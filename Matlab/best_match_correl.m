@@ -8,7 +8,7 @@
 % Zero-normalized cross-correlation:
 % https://en.wikipedia.org/wiki/Cross-correlation
 
-function out = best_match_norm(image_collection, query_image, topJ)
+function out = best_match_correl(image_collection, query_image, topJ)
 % BEST_MATCH  Baseline retrieval by direct FFT cross-correlation.
 %   out = best_match(image_collection, query_image, topK)
 % Inputs:
@@ -22,37 +22,35 @@ function out = best_match_norm(image_collection, query_image, topJ)
 %   out.shifts_topJ  : topJ×2 [row_shift, col_shift] (circular) to align slice to query
 %   out.t_total      : elapsed time in second
 
-
+t0 = tic;
 [m,n,N] = size(image_collection);
 topJ = min(topJ, N);
 
 % Try normalization
 q0  = query_image; 
-n  = norm(q0(:),'fro'); % 
-% may use norm(M, 'fro')
-Fq  = fft2(nq);                      
+nq  = norm(q0(:),'fro'); % 
+Fq  = fft2(q0/norm(q0(:),'fro'));                      
 
 scores = zeros(1,N);
 
-t0 = tic;
 % 1) score each slice by peak of correlation map
 for i = 1:N
     Ii  = image_collection(:,:,i);
-
     % centering in mean and normalize images
-    Ii0 = Ii - mean(Ii(:));
-    ni  = norm(Ii0(:)) + eps;
+    Ii0 = Ii/norm(Ii,'fro');
+    ni  = norm(Ii,'fro');
 
     % circular cross-correlation via FFT (no rot90 when using conj)
     cm  = ifft2( Fq .* fft2(rot90(Ii0,2)),'symmetric');
     % normalized peak; good match -> 1
-    scores(i) = max(cm, [], 'all') / (nq * ni);
+    scores(i) = max(cm, [], 'all');
 end
-t_total = toc(t0);
 
 % 2) pick topJ
 [~, order] = sort(scores, 'descend');
 idx_topJ   = order(1:topJ);
+
+t_total = toc(t0);
 
 % 3) for topJ, also compute circular shifts from the argmax
 % shifts computed from the same normalized cross correlation map
