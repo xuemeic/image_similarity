@@ -39,8 +39,8 @@ anywhere in the M×N query image. Return a K*1 vector of peak scores (one per im
 treat a template bank ('template'), build phi for all images using max filter method and score the query image, find top J neighbors with their corresponding shifts. 
 * Run: `out = best_match_temp(image_collection, query_image, topK, temp_mat)`
 
-`test_best_match.m` : Loads an m×n×N stack of images (cat_001.mat … cat_301.mat, each with variable A). Picks query_idx as the query image. Run
-`best_match_norm(image_collection, query_image, topJ)`and `best_match_template(image_collection, query_image, topJ, template)`
-Prints Top-J indices, circular shifts, and elapsed time (FFT). Visualizes Top-J results for both methods (FFT on top row, Template on bottom row). Lastly Reports overlap between the two Top-J lists.
+`test_best_match.m` : Loads an m×n×N stack of images (cat_001.mat … cat_301.mat, each with variable A). Picks query_idx as the query image.
+Inside `test_best_match.m`, we have `best_match_norm(image_collection, query_image, topJ)`and `best_match_template(image_collection, query_image, topJ, template)`. Prints Top-J indices, circular shifts, and elapsed time (FFT). Visualizes Top-J results for both methods (FFT on top row, Template on bottom row). Lastly Reports overlap between the two Top-J lists.
+* Click "Run" to run it
 
 
