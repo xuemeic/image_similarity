@@ -24,20 +24,31 @@ function out = best_match_template(image_collection, query_image, topJ,template,
 % Tn = T % Denormalize
 
 % reuse offline data
-Tn  = index.Tn;
-phi = index.phi_db;               % KxN
-[m,n,~] = size(image_collection); 
+    Tn  = index.Tn;
+    phi = index.phi_db;               % KxN
+    [m,n,~] = size(image_collection);
 
-N = size(phi,2);
+
 topJ = min(topJ, N);
+phi  = zeros(size(Tn,3), N);
+
+% score every cat_i (N total in img collection) against all K templates
+
+for i = 1:N
+    Img_i = image_collection(:,:,i);  % load 50x50 matrix 
+    Img_i = Img_i / norm(Img_i,'fro');
+    phi(:, i) = max_filter(Tn, Img_i);    % Kx1
+end
 
 t_phi_start = tic;
-% Normalize query_image (same as before)
-nfq = norm(query_image(:),'fro');
-query_image_norm = query_image / nfq;
+% Normalize query_image first
+query_image_norm = query_image/norm(query_image(:),'fro');
 
-% Compute phi0 for query image
-phi0 = max_filter(Tn, query_image_norm);
+% scores via max-filter for template to compute phi0
+phi0 = max_filter(Tn, query_image_norm); 
+% create a k*1 feature vector for query image versus template stack
+% phi0 will be used for nearest neighbor search
+
 % nearest neighbors in phi-space 
 D2 = sum((phi - phi0).^2, 1);  
 % phi K*N (K templates * N cat images in img collection
@@ -79,4 +90,24 @@ out.t_total     = t_phi;        % timing
 out.distances   = distances;     % 1*J
 end
 
+
+function index = build_phi_index(image_collection, template)
+
+% normalize templates
+norms = sqrt(sum(template.^2,[1 2]));
+Tn    = template ./ norms;
+
+% build phi (KxN)
+[~,~,N] = size(image_collection);
+phi = zeros(size(Tn,3), N);
+for i = 1:N
+    Img_i = image_collection(:,:,i);
+    nf = norm(Img_i(:),'fro');
+    Img_i = Img_i / nf;
+    phi(:, i) = max_filter(Tn, Img_i);
+end
+
+%phi_db: pre-computed our database
+index = struct('phi_db', phi, 'Tn', Tn); 
+end
 

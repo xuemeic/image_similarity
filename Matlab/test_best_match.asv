@@ -5,7 +5,6 @@
 % Modified by Amy on 08/28/2025 for clarity
 % add 'template' as a variable by Amy on 08/31/2025
 % Line up the variables names with the paper by Amy on 08/31/2025
-% Add pre-computed phi structure on 10/09/2025
 
 clear; % clear the memory
 
@@ -29,10 +28,10 @@ for i = 1:N
     image_collection(:,:,i) = S.A;         % each mat file has 50 * 50 variable A 
 end
 query_image = image_collection(:,:,query_idx);
-index = build_phi_index(image_collection, template);
+
 % run both methods
 out_fft = best_match_norm(image_collection, query_image, topJ);
-out_tpl = best_match_template(image_collection, query_image, topJ, template,index);
+out_tpl = best_match_template(image_collection, query_image, topJ, template);
 
 % print all the outputs
 fprintf('\n=== FFT baseline ===\n');
@@ -43,7 +42,7 @@ fprintf('Elapsed: %.3f s\n', out_fft.t_total);
 fprintf('\n=== Template method ===\n');
 fprintf('TopJ idx: '); disp(out_tpl.idx_topJ);
 fprintf('Shifts (row,col):\n'); disp(out_tpl.shifts_topJ);
-fprintf('Elapsed: %.3f s\n', out_tpl.t_total);
+
 % overlap and simple comparison
 overlap = intersect(out_fft.idx_topJ, out_tpl.idx_topJ);
 fprintf('\nOverlap count (indices appearing in both Top-%d): %d\n', topJ, numel(overlap));
