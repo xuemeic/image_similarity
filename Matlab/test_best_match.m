@@ -30,29 +30,40 @@ for i = 1:N
 end
 query_image = image_collection(:,:,query_idx);
 index = build_phi_index(image_collection, template);
+
 % run both methods
-out_fft = best_match_norm(image_collection, query_image, topJ);
+out_cor = best_match_norm(image_collection, query_image, topJ);
 out_tpl = best_match_template(image_collection, query_image, topJ, template,index);
+out_dis = best_match_distance(image_collection, query_image, topJ);
 
 % print all the outputs
-fprintf('\n=== FFT baseline ===\n');
-fprintf('TopJ idx: '); disp(out_fft.idx_topJ);
-fprintf('Shifts (row,col):\n'); disp(out_fft.shifts_topJ);
-fprintf('Elapsed: %.3f s\n', out_fft.t_total);
+% print correlation method outputs
+fprintf('\n=== correlation method ===\n');
+fprintf('TopJ idx: '); disp(out_cor.idx_topJ);
+fprintf('Shifts (row,col):\n'); disp(out_cor.shifts_topJ);
+fprintf('Elapsed: %.3f s\n', out_cor.t_total);
 
+% print distance method outputs
+fprintf('\n=== Distance method ===\n');
+fprintf('TopJ idx: '); disp(out_dis.idx_topJ);
+fprintf('Shifts (row,col):\n'); disp(out_dis.shifts_topJ);
+fprintf('Elapsed: %.3f s\n', out_dis.t_total);
+
+%print output method outputs
 fprintf('\n=== Template method ===\n');
 fprintf('TopJ idx: '); disp(out_tpl.idx_topJ);
 fprintf('Shifts (row,col):\n'); disp(out_tpl.shifts_topJ);
 fprintf('Elapsed: %.3f s\n', out_tpl.t_total);
+
 % overlap and simple comparison
-overlap = intersect(out_fft.idx_topJ, out_tpl.idx_topJ);
+overlap = intersect(out_cor.idx_topJ, out_tpl.idx_topJ);
 fprintf('\nOverlap count (indices appearing in both Top-%d): %d\n', topJ, numel(overlap));
 fprintf('Overlap indices: '); disp(sort(overlap));
 
 % simple figure to visualize both rankings
-%figure('Name','TopJ by FFT (top) vs Template (bottom)'); colormap gray
-%rows = 2; cols = topJ;
-%for j = 1:topJ
+% figure('Name','TopJ by FFT (top) vs Template (bottom)'); colormap gray
+% rows = 2; cols = topJ;
+% for j = 1:topJ
     %i = out_fft.idx_topJ(j);
     %subplot(rows, cols, j); imagesc(image_collection(:,:,i)); axis image off
     %title(sprintf('FFT %03d', i));
