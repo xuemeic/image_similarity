@@ -10,6 +10,7 @@
 % 1. The input matrix is square (rows×rows)
 % 2. Shifts all non-NaN values by a constant
 % 3. Replaces any NaNs with zeros. 
+% 4. Convert to double in [0,1] when appropriate using im2double
 % Generally it is used to standardize image matrices before filtering.
 
 %Usage:
@@ -28,8 +29,9 @@ function matrix = prepare_matrix(test_im, VALUE)
 
     arguments
     test_im
-    VALUE = 0
+    VALUE = 0;
     end
+    
 
     % 1. Get dimensions
     [rows, cols] = size(test_im);
@@ -42,12 +44,17 @@ function matrix = prepare_matrix(test_im, VALUE)
     end
 
     % 3. Add VALUE to every non‑NaN entry
-    idxNonNaN = ~isnan(test_im);
-    test_im(idxNonNaN) = test_im(idxNonNaN) + VALUE;
+    %idxNonNaN = ~isnan(test_im);
+    %test_im(idxNonNaN) = test_im(idxNonNaN) + VALUE;
 
-    % 4. Replace all remaining NaNs with zeros
-    test_im(isnan(test_im)) = 0;
+    % 4. Replace all remaining NaNs with VALUE
+    %im_max_val = max(test_im(:));
+    test_im(isnan(test_im)) = VALUE;
+    %test_im = test_im/max(test_im(:));
 
-    % 5. Return the processed matrix
+    % 5. im2double(test_im)
+    %test_im = im2double(test_im);
+
+    % 6. Return the processed matrix
     matrix = test_im;
 end

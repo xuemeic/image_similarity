@@ -32,7 +32,7 @@ query_image = image_collection(:,:,query_idx);
 index = build_phi_index(image_collection, template);
 
 % run both methods
-out_cor = best_match_norm(image_collection, query_image, topJ);
+out_cor = best_match_correl(image_collection, query_image, topJ);
 out_tpl = best_match_template(image_collection, query_image, topJ, template,index);
 out_dis = best_match_distance(image_collection, query_image, topJ);
 
